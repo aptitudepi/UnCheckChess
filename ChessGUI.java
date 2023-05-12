@@ -8,13 +8,9 @@ public class ChessGUI extends JFrame implements ActionListener {
   private JPanel masterPanel;
   private JPanel chessBoard;
   private JButton[][] arrSquare;
-  private ImageIcon bg;
   JLabel lbBG;
-  private Image[][] chessPieceImages;
   private String cols = "HGFEDCBA";
   private String rows = "87654321";
-  public static final int QUEEN = 0, KING = 1, ROOK = 2, KNIGHT = 3, BISHOP = 4, PAWN = 5;
-  public static final int[] STARTING_ROW = { ROOK, KNIGHT, BISHOP, KING, QUEEN, BISHOP, KNIGHT, ROOK };
 
   public static void main(String[] args) {
     JFrame frame = new ChessGUI();
@@ -28,7 +24,6 @@ public class ChessGUI extends JFrame implements ActionListener {
   ChessGUI() {
     super("Chess GUI"); // Window Title
     // create components
-    chessPieceImages = new Image[2][6];
     arrSquare = new JButton[8][8];
     // bg = new ImageIcon("./img/wood3.jpg");
     // lbBG = new JLabel();
@@ -37,20 +32,29 @@ public class ChessGUI extends JFrame implements ActionListener {
 
     // create JPanel
     masterPanel = new JPanel(new BorderLayout(3, 3));
-    chessBoard = new JPanel(new GridLayout(8,8));
+    chessBoard = new JPanel(new GridLayout(8, 8));
     // add components to JPanel
     // masterPanel.add(lbBG);
     for (int i = 0; i < 8; i++) {
       for (int j = 0; j < 8; j++) {
         arrSquare[i][j] = new JButton();
         chessBoard.add(arrSquare[i][j]);
-        arrSquare[i][j].setBackground(((i % 2 == 0 & j % 2 == 1) | (i % 2 == 1 & j % 2 == 0))? Color.decode("#95744B"): Color.decode("#C0B9B1")); // Sets Image background to White/Black
+        arrSquare[i][j].setBackground(((i % 2 == 0 & j % 2 == 1) | (i % 2 == 1 & j % 2 == 0)) ? Color.decode("#95744B")
+            : Color.decode("#C0B9B1")); // Sets Image background to White/Black
         switch (j) {
           case 0:
           case 7:
             if (i == 7) {
               try {
                 Image img = ImageIO.read(getClass().getResource("img/wR.png"));
+                arrSquare[i][j].setIcon(new ImageIcon(img));
+              } catch (Exception ex) {
+                System.out.println(ex);
+              }
+            }
+            if (i == 0) {
+              try {
+                Image img = ImageIO.read(getClass().getResource("img/bR.png"));
                 arrSquare[i][j].setIcon(new ImageIcon(img));
               } catch (Exception ex) {
                 System.out.println(ex);
@@ -67,12 +71,28 @@ public class ChessGUI extends JFrame implements ActionListener {
                 System.out.println(ex);
               }
             }
-            break;       
+            if (i == 0) {
+              try {
+                Image img = ImageIO.read(getClass().getResource("img/bN.png"));
+                arrSquare[i][j].setIcon(new ImageIcon(img));
+              } catch (Exception ex) {
+                System.out.println(ex);
+              }
+            }
+            break;
           case 2:
           case 5:
             if (i == 7) {
               try {
                 Image img = ImageIO.read(getClass().getResource("img/wB.png"));
+                arrSquare[i][j].setIcon(new ImageIcon(img));
+              } catch (Exception ex) {
+                System.out.println(ex);
+              }
+            }
+            if (i == 0) {
+              try {
+                Image img = ImageIO.read(getClass().getResource("img/bB.png"));
                 arrSquare[i][j].setIcon(new ImageIcon(img));
               } catch (Exception ex) {
                 System.out.println(ex);
@@ -88,7 +108,15 @@ public class ChessGUI extends JFrame implements ActionListener {
                 System.out.println(ex);
               }
             }
-            break;       
+            if (i == 0) {
+              try {
+                Image img = ImageIO.read(getClass().getResource("img/bQ.png"));
+                arrSquare[i][j].setIcon(new ImageIcon(img));
+              } catch (Exception ex) {
+                System.out.println(ex);
+              }
+            }
+            break;
           case 4:
             if (i == 7) {
               try {
@@ -98,15 +126,40 @@ public class ChessGUI extends JFrame implements ActionListener {
                 System.out.println(ex);
               }
             }
-            break;       
+            if (i == 0) {
+              try {
+                Image img = ImageIO.read(getClass().getResource("img/bK.png"));
+                arrSquare[i][j].setIcon(new ImageIcon(img));
+              } catch (Exception ex) {
+                System.out.println(ex);
+              }
+            }
+            break;
         }
-          
+        if (i == 6) {
+          try {
+            Image img = ImageIO.read(getClass().getResource("img/wP.png"));
+            arrSquare[i][j].setIcon(new ImageIcon(img));
+          } catch (Exception ex) {
+            System.out.println(ex);
+          }
+        }
+        if (i == 1) {
+          try {
+            Image img = ImageIO.read(getClass().getResource("img/bP.png"));
+            arrSquare[i][j].setIcon(new ImageIcon(img));
+          } catch (Exception ex) {
+            System.out.println(ex);
+          }
+        }
+
       }
     }
-  masterPanel.add(chessBoard);
-  // set JPanel to be the content pane
-  setContentPane(masterPanel);
-  // selector.addActionListener(this);
+    masterPanel.add(chessBoard);
+
+    // set JPanel to be the content pane
+    setContentPane(masterPanel);
+    // selector.addActionListener(this);
   }
 
   public void actionPerformed(ActionEvent e) {
