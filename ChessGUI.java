@@ -7,7 +7,7 @@ public class ChessGUI extends JFrame implements ActionListener {
   // declare component variables
   private JPanel masterPanel;
   private JPanel chessBoard;
-  private JButton[][] arrSquare;
+  private Tile[][] arrSquare;
   JLabel lbBG;
   private String cols = "HGFEDCBA";
   private String rows = "87654321";
@@ -24,7 +24,7 @@ public class ChessGUI extends JFrame implements ActionListener {
   ChessGUI() {
     super("Chess GUI"); // Window Title
     // create components
-    arrSquare = new JButton[8][8];
+    arrSquare = new Tile[8][8];
     // bg = new ImageIcon("./img/wood3.jpg");
     // lbBG = new JLabel();
     // lbBG.setIcon(bg);
@@ -37,120 +37,58 @@ public class ChessGUI extends JFrame implements ActionListener {
     // masterPanel.add(lbBG);
     for (int i = 0; i < 8; i++) {
       for (int j = 0; j < 8; j++) {
-        arrSquare[i][j] = new JButton();
-        chessBoard.add(arrSquare[i][j]);
-        arrSquare[i][j].setBackground(((i % 2 == 0 & j % 2 == 1) | (i % 2 == 1 & j % 2 == 0)) ? Color.decode("#95744B")
-            : Color.decode("#C0B9B1")); // Sets Image background to White/Black
+        arrSquare[i][j] = new Tile(((i % 2 == 0 & j % 2 == 1) | (i % 2 == 1 & j % 2 == 0))? false: true);
+        chessBoard.add(arrSquare[i][j].btn);
         switch (j) {
           case 0:
           case 7:
             if (i == 7) {
-              try {
-                Image img = ImageIO.read(getClass().getResource("img/wR.png"));
-                arrSquare[i][j].setIcon(new ImageIcon(img));
-              } catch (Exception ex) {
-                System.out.println(ex);
-              }
+                arrSquare[i][j].setPiece(true, 3);
             }
             if (i == 0) {
-              try {
-                Image img = ImageIO.read(getClass().getResource("img/bR.png"));
-                arrSquare[i][j].setIcon(new ImageIcon(img));
-              } catch (Exception ex) {
-                System.out.println(ex);
-              }
+                arrSquare[i][j].setPiece(false, 3);
             }
             break;
           case 1:
           case 6:
             if (i == 7) {
-              try {
-                Image img = ImageIO.read(getClass().getResource("img/wN.png"));
-                arrSquare[i][j].setIcon(new ImageIcon(img));
-              } catch (Exception ex) {
-                System.out.println(ex);
-              }
+                arrSquare[i][j].setPiece(true, 1);
             }
             if (i == 0) {
-              try {
-                Image img = ImageIO.read(getClass().getResource("img/bN.png"));
-                arrSquare[i][j].setIcon(new ImageIcon(img));
-              } catch (Exception ex) {
-                System.out.println(ex);
+                arrSquare[i][j].setPiece(false, 1);
               }
-            }
             break;
           case 2:
           case 5:
             if (i == 7) {
-              try {
-                Image img = ImageIO.read(getClass().getResource("img/wB.png"));
-                arrSquare[i][j].setIcon(new ImageIcon(img));
-              } catch (Exception ex) {
-                System.out.println(ex);
-              }
+                arrSquare[i][j].setPiece(true, 2);
             }
             if (i == 0) {
-              try {
-                Image img = ImageIO.read(getClass().getResource("img/bB.png"));
-                arrSquare[i][j].setIcon(new ImageIcon(img));
-              } catch (Exception ex) {
-                System.out.println(ex);
-              }
+                arrSquare[i][j].setPiece(false, 2);
             }
             break;
           case 3:
             if (i == 7) {
-              try {
-                Image img = ImageIO.read(getClass().getResource("img/wQ.png"));
-                arrSquare[i][j].setIcon(new ImageIcon(img));
-              } catch (Exception ex) {
-                System.out.println(ex);
-              }
+                arrSquare[i][j].setPiece(true, 4);
             }
             if (i == 0) {
-              try {
-                Image img = ImageIO.read(getClass().getResource("img/bQ.png"));
-                arrSquare[i][j].setIcon(new ImageIcon(img));
-              } catch (Exception ex) {
-                System.out.println(ex);
-              }
+                arrSquare[i][j].setPiece(false, 4);
             }
             break;
           case 4:
             if (i == 7) {
-              try {
-                Image img = ImageIO.read(getClass().getResource("img/wK.png"));
-                arrSquare[i][j].setIcon(new ImageIcon(img));
-              } catch (Exception ex) {
-                System.out.println(ex);
-              }
+              arrSquare[i][j].setPiece(true, 5);
             }
             if (i == 0) {
-              try {
-                Image img = ImageIO.read(getClass().getResource("img/bK.png"));
-                arrSquare[i][j].setIcon(new ImageIcon(img));
-              } catch (Exception ex) {
-                System.out.println(ex);
-              }
+              arrSquare[i][j].setPiece(false, 5);
             }
             break;
         }
         if (i == 6) {
-          try {
-            Image img = ImageIO.read(getClass().getResource("img/wP.png"));
-            arrSquare[i][j].setIcon(new ImageIcon(img));
-          } catch (Exception ex) {
-            System.out.println(ex);
-          }
+          arrSquare[i][j].setPiece(true, 0);
         }
         if (i == 1) {
-          try {
-            Image img = ImageIO.read(getClass().getResource("img/bP.png"));
-            arrSquare[i][j].setIcon(new ImageIcon(img));
-          } catch (Exception ex) {
-            System.out.println(ex);
-          }
+          arrSquare[i][j].setPiece(false, 0);
         }
 
       }
