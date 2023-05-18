@@ -6,6 +6,7 @@ public class Tile {
   public JButton btn;
   private boolean isWhite;
   private final char[] pieceTypes = { 'P', 'N', 'B', 'R', 'Q', 'K' };
+  private char piece;
 
   public Tile() {
     isWhite = true;
@@ -19,10 +20,19 @@ public class Tile {
   }
 
   public void setPiece(boolean white, int numType) {
+    piece = pieceTypes[numType];
     try {
-      btn.setIcon(new ImageIcon(ImageIO.read(getClass().getResource("img/" + ((white) ? "w" : "b") + pieceTypes[numType] + ".png"))));
+      btn.setIcon(new ImageIcon(ImageIO.read(getClass().getResource("img/" + ((white) ? "w" : "b") + piece + ".png"))));
     } catch (Exception ex) {
       System.out.println(ex);
     }
+  }
+
+  public void setPiece() {
+    btn.setIcon(null);
+  }
+
+  public void move(int xi, int yi, int xf, int yf, Tile[][] arr) {
+    arr[xi][yi].setPiece();
   }
 }
