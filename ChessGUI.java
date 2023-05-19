@@ -1,4 +1,3 @@
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -9,8 +8,6 @@ public class ChessGUI extends JFrame implements ActionListener {
   private JPanel chessBoard;
   private Tile[][] arrSquare;
   JLabel lbBG;
-  private String cols = "HGFEDCBA";
-  private String rows = "87654321";
 
   public static void main(String[] args) {
     JFrame frame = new ChessGUI();

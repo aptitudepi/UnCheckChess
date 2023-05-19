@@ -1,6 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 import javax.imageio.ImageIO;
+import java.util.Arrays;
 
 public class Tile {
   public JButton btn;
@@ -27,12 +28,22 @@ public class Tile {
       System.out.println(ex);
     }
   }
+  
+  public char getnumType() {
+    return pieceTypes.indexOf(piece);
+  }
+
+  public boolean getColor() {
+    return isWhite;
+  }
 
   public void setPiece() {
     btn.setIcon(null);
   }
 
   public void move(int xi, int yi, int xf, int yf, Tile[][] arr) {
+    Icon piece = arr[xi][yi].btn.getIcon();
+    arr[xf][yf].setPiece(arr[xi][yi].getColor(), arr[xi][yi].getPiece);
     arr[xi][yi].setPiece();
   }
 }
