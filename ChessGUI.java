@@ -111,7 +111,8 @@ public class ChessGUI extends JFrame implements ActionListener {
           if (arrSquare[i][j].btn == button) {
             finalX = i;
             finalY = j;
-            pieceSelected = true;
+            Tile.move(initX, initY, finalX, finalY, arrSquare);
+            pieceSelected = false;
             break;
           }
         }
@@ -127,7 +128,6 @@ public class ChessGUI extends JFrame implements ActionListener {
           }
         }
       }
-      Tile.move(initX, initY, finalX, finalY);
     }
     
 

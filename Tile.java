@@ -32,7 +32,7 @@ public class Tile {
     }
   }
   
-  public int getnumType() {
+  public int numType() {
     return numType;
   }
 
@@ -45,7 +45,7 @@ public class Tile {
   }
 
   public static void move(int xi, int yi, int xf, int yf, Tile[][] arr) {
-    arr[xf][yf].setPiece(arr[xi][yi].getColor(), arr[xi][yi].getnumType());
+    arr[xf][yf].setPiece(arr[xi][yi].getColor(), arr[xi][yi].numType());
     arr[xi][yi].setPiece();
   }
 }
