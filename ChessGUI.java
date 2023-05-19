@@ -7,6 +7,8 @@ public class ChessGUI extends JFrame implements ActionListener {
   private JPanel masterPanel;
   private JPanel chessBoard;
   private Tile[][] arrSquare;
+  private boolean pieceSelected;
+  private int initX, initY, finalX, finalY;
   JLabel lbBG;
 
   public static void main(String[] args) {
@@ -34,42 +36,42 @@ public class ChessGUI extends JFrame implements ActionListener {
     // masterPanel.add(lbBG);
     for (int i = 0; i < 8; i++) {
       for (int j = 0; j < 8; j++) {
-        arrSquare[i][j] = new Tile(((i % 2 == 0 & j % 2 == 1) | (i % 2 == 1 & j % 2 == 0))? false: true);
+        arrSquare[i][j] = new Tile(((i % 2 == 0 & j % 2 == 1) | (i % 2 == 1 & j % 2 == 0)) ? false : true);
         chessBoard.add(arrSquare[i][j].btn);
         switch (j) {
           case 0:
           case 7:
             if (i == 7) {
-                arrSquare[i][j].setPiece(true, 3);
+              arrSquare[i][j].setPiece(true, 3);
             }
             if (i == 0) {
-                arrSquare[i][j].setPiece(false, 3);
+              arrSquare[i][j].setPiece(false, 3);
             }
             break;
           case 1:
           case 6:
             if (i == 7) {
-                arrSquare[i][j].setPiece(true, 1);
+              arrSquare[i][j].setPiece(true, 1);
             }
             if (i == 0) {
-                arrSquare[i][j].setPiece(false, 1);
-              }
+              arrSquare[i][j].setPiece(false, 1);
+            }
             break;
           case 2:
           case 5:
             if (i == 7) {
-                arrSquare[i][j].setPiece(true, 2);
+              arrSquare[i][j].setPiece(true, 2);
             }
             if (i == 0) {
-                arrSquare[i][j].setPiece(false, 2);
+              arrSquare[i][j].setPiece(false, 2);
             }
             break;
           case 3:
             if (i == 7) {
-                arrSquare[i][j].setPiece(true, 4);
+              arrSquare[i][j].setPiece(true, 4);
             }
             if (i == 0) {
-                arrSquare[i][j].setPiece(false, 4);
+              arrSquare[i][j].setPiece(false, 4);
             }
             break;
           case 4:
@@ -94,10 +96,41 @@ public class ChessGUI extends JFrame implements ActionListener {
 
     // set JPanel to be the content pane
     setContentPane(masterPanel);
-    // selector.addActionListener(this);
+    for (int i = 0; i < 8; i++) {
+      for (int j = 0; j < 8; j++) {
+        arrSquare[i][j].btn.addActionListener(this);
+      }
+    }
   }
 
   public void actionPerformed(ActionEvent e) {
+    JButton button = (JButton) e.getSource();
+    if (pieceSelected) {
+      for (int i = 0; i < arrSquare.length; i++) {
+        for (int j = 0; j < arrSquare[i].length; j++) {
+          if (arrSquare[i][j].btn == button) {
+            finalX = i;
+            finalY = j;
+            pieceSelected = true;
+            break;
+          }
+        }
+      }
+    } else {
+      for (int i = 0; i < arrSquare.length; i++) {
+        for (int j = 0; j < arrSquare[i].length; j++) {
+          if (arrSquare[i][j].btn == button) {
+            initX = i;
+            initY = j;
+            pieceSelected = true;
+            break;
+          }
+        }
+      }
+      Tile.move(initX, initY, finalX, finalY);
+    }
+    
+
     // if (e.getSource() == selector) {}
   }
 }

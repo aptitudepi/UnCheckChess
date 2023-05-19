@@ -1,13 +1,16 @@
 import javax.swing.*;
 import java.awt.*;
 import javax.imageio.ImageIO;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Tile {
   public JButton btn;
   private boolean isWhite;
-  private final char[] pieceTypes = { 'P', 'N', 'B', 'R', 'Q', 'K' };
+  private final Character[] pieces = { 'P', 'N', 'B', 'R', 'Q', 'K' };
+  private final ArrayList<Character> pieceTypes = new ArrayList<>(Arrays.asList(pieces));
   private char piece;
+  private int numType;
 
   public Tile() {
     isWhite = true;
@@ -21,7 +24,7 @@ public class Tile {
   }
 
   public void setPiece(boolean white, int numType) {
-    piece = pieceTypes[numType];
+    piece = pieceTypes.get(numType);
     try {
       btn.setIcon(new ImageIcon(ImageIO.read(getClass().getResource("img/" + ((white) ? "w" : "b") + piece + ".png"))));
     } catch (Exception ex) {
@@ -29,8 +32,8 @@ public class Tile {
     }
   }
   
-  public char getnumType() {
-    return pieceTypes.indexOf(piece);
+  public int getnumType() {
+    return numType;
   }
 
   public boolean getColor() {
@@ -41,9 +44,8 @@ public class Tile {
     btn.setIcon(null);
   }
 
-  public void move(int xi, int yi, int xf, int yf, Tile[][] arr) {
-    Icon piece = arr[xi][yi].btn.getIcon();
-    arr[xf][yf].setPiece(arr[xi][yi].getColor(), arr[xi][yi].getPiece);
+  public static void move(int xi, int yi, int xf, int yf, Tile[][] arr) {
+    arr[xf][yf].setPiece(arr[xi][yi].getColor(), arr[xi][yi].getnumType());
     arr[xi][yi].setPiece();
   }
 }
