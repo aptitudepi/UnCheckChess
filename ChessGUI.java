@@ -22,17 +22,10 @@ public class ChessGUI extends JFrame implements ActionListener {
   }
 
   public void onMoveMade(int initX, int initY, int finalX, int finalY) {
-    // Implement the logic to update the GUI based on the move made in the ChessGame
-    // For example, you can update the appearance of the tiles/buttons to reflect
-    // the move
-
-    // Here's a simple example where the background color of the tiles is changed:
     Tile initialTile = arrSquare[initX][initY];
     Tile finalTile = arrSquare[finalX][finalY];
-
-    // Update the background color of the initial and final tiles
-    initialTile.btn.setBackground((initX + initY) % 2 == 0 ? Color.decode("#C0B9B1") : Color.decode("#95744B"));
-    finalTile.btn.setBackground((finalX + finalY) % 2 == 0 ? Color.decode("#C0B9B1") : Color.decode("#95744B"));
+    finalTile.setPiece(initialTile.getPiece());
+    initialTile.setPiece();
   }
 
   // constructor

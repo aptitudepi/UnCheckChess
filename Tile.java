@@ -65,4 +65,8 @@ public class Tile {
       btn.setIcon(null);
     }
   }
+
+  public Piece getPiece() {
+    return piece;
+}
 }
