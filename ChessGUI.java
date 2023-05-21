@@ -42,7 +42,7 @@ public class ChessGUI extends JFrame implements ActionListener {
     // masterPanel.add(lbBG);
     for (int i = 0; i < 8; i++) {
       for (int j = 0; j < 8; j++) {
-        arrSquare[i][j] = new Tile(chessGame, ((i % 2 == 0 & j % 2 == 1) | (i % 2 == 1 & j % 2 == 0)) ? false : true);
+        arrSquare[i][j] = new Tile(chessGame, ((i % 2 == 0 & j % 2 == 1) | (i % 2 == 1 & j % 2 == 0)));
         chessBoard.add(arrSquare[i][j].btn);
         switch (j) {
           case 0:
