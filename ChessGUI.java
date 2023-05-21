@@ -14,10 +14,15 @@ public class ChessGUI extends JFrame implements ActionListener {
 
   public static void main(String[] args) {
     JFrame frame = new ChessGUI();
-    frame.setPreferredSize(new Dimension(2000, 1080));
-    frame.pack();
-    frame.setVisible(true);
-    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
+            frame.setPreferredSize(new Dimension(2000, 1080));
+            frame.setVisible(true);
+            frame.pack();
+            frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+          
+        }
+    }
   }
 
   public void onMoveMade(int initX, int initY, int finalX, int finalY) {
@@ -42,7 +47,7 @@ public class ChessGUI extends JFrame implements ActionListener {
     // masterPanel.add(lbBG);
     for (int i = 0; i < 8; i++) {
       for (int j = 0; j < 8; j++) {
-        arrSquare[i][j] = new Tile(chessGame, ((i % 2 == 0 & j % 2 == 1) | (i % 2 == 1 & j % 2 == 0)) ? false : true);
+        arrSquare[i][j] = new Tile(chessGame, !((i % 2 == 0 & j % 2 != 0) | (i % 2 != 0 & j % 2 == 0)));
         chessBoard.add(arrSquare[i][j].btn);
         switch (j) {
           case 0:
