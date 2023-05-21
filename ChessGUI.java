@@ -14,10 +14,15 @@ public class ChessGUI extends JFrame implements ActionListener {
 
   public static void main(String[] args) {
     JFrame frame = new ChessGUI();
-    frame.setPreferredSize(new Dimension(2000, 1080));
-    frame.pack();
-    frame.setVisible(true);
-    frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+    SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
+            frame.setPreferredSize(new Dimension(2000, 1080));
+            frame.setVisible(true);
+            frame.pack();
+            frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+          
+        }
+    }
   }
 
   public void onMoveMade(int initX, int initY, int finalX, int finalY) {
