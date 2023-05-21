@@ -17,7 +17,7 @@ public class ChessGUI extends JFrame implements ActionListener {
     frame.setPreferredSize(new Dimension(2000, 1080));
     frame.pack();
     frame.setVisible(true);
-    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
   }
 
   public void onMoveMade(int initX, int initY, int finalX, int finalY) {
