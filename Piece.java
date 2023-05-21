@@ -1,7 +1,5 @@
 public class Piece {
-    private String pieceName;
     private boolean isWhite;
-    private boolean hasReachedEnd;
     private PieceType pieceType;
 
     enum PieceType {
@@ -27,25 +25,13 @@ public class Piece {
         this.pieceType = pieceType;
         this.isWhite = isWhite;
     }
-
-    public String getPieceName() {
-        return pieceName;
-    }
-
+    
     public PieceType getPieceType() {
         return pieceType;
     }
 
     public boolean isWhite() {
         return isWhite;
-    }
-
-    public boolean hasReachedEnd() {
-        return hasReachedEnd;
-    }
-
-    public void setHasReachedEnd(boolean hasReachedEnd) {
-        this.hasReachedEnd = hasReachedEnd;
     }
 
     public boolean isValidMove(int initX, int initY, int finalX, int finalY) {

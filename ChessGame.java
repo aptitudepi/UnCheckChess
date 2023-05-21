@@ -7,14 +7,15 @@ public class ChessGame {
     private List<String> previousPositions;
     private int movesWithoutCaptureOrPawnMove;
     private ChessGUI gui;
-    
+    private boolean whiteTurn;
+
     public enum GameResult {
         WHITE_WINS,
         BLACK_WINS,
         DRAW,
         ONGOING
     }
-    
+
     public void registerMoveListener(ChessGUI gui) {
         this.gui = gui;
     }
@@ -24,43 +25,44 @@ public class ChessGame {
         board = new Piece[8][8];
         previousPositions = new ArrayList<>();
         movesWithoutCaptureOrPawnMove = 0;
+        whiteTurn = true;
 
         // Set up the pawns
         for (int col = 0; col < 8; col++) {
             board[1][col] = new Piece(Piece.PieceType.PAWN, false); // Black pawns
-            board[6][col] = new Piece(Piece.PieceType.PAWN, true);  // White pawns
+            board[6][col] = new Piece(Piece.PieceType.PAWN, true); // White pawns
         }
 
         // Set up the rooks
         board[0][0] = new Piece(Piece.PieceType.ROOK, false); // Black rook
         board[0][7] = new Piece(Piece.PieceType.ROOK, false); // Black rook
-        board[7][0] = new Piece(Piece.PieceType.ROOK, true);  // White rook
-        board[7][7] = new Piece(Piece.PieceType.ROOK, true);  // White rook
+        board[7][0] = new Piece(Piece.PieceType.ROOK, true); // White rook
+        board[7][7] = new Piece(Piece.PieceType.ROOK, true); // White rook
 
         // Set up the knights
         board[0][1] = new Piece(Piece.PieceType.KNIGHT, false); // Black knight
         board[0][6] = new Piece(Piece.PieceType.KNIGHT, false); // Black knight
-        board[7][1] = new Piece(Piece.PieceType.KNIGHT, true);  // White knight
-        board[7][6] = new Piece(Piece.PieceType.KNIGHT, true);  // White knight
+        board[7][1] = new Piece(Piece.PieceType.KNIGHT, true); // White knight
+        board[7][6] = new Piece(Piece.PieceType.KNIGHT, true); // White knight
 
         // Set up the bishops
         board[0][2] = new Piece(Piece.PieceType.BISHOP, false); // Black bishop
         board[0][5] = new Piece(Piece.PieceType.BISHOP, false); // Black bishop
-        board[7][2] = new Piece(Piece.PieceType.BISHOP, true);  // White bishop
-        board[7][5] = new Piece(Piece.PieceType.BISHOP, true);  // White bishop
+        board[7][2] = new Piece(Piece.PieceType.BISHOP, true); // White bishop
+        board[7][5] = new Piece(Piece.PieceType.BISHOP, true); // White bishop
 
         // Set up the queens
         board[0][3] = new Piece(Piece.PieceType.QUEEN, false); // Black queen
-        board[7][3] = new Piece(Piece.PieceType.QUEEN, true);  // White queen
+        board[7][3] = new Piece(Piece.PieceType.QUEEN, true); // White queen
 
         // Set up the kings
         board[0][4] = new Piece(Piece.PieceType.KING, false); // Black king
-        board[7][4] = new Piece(Piece.PieceType.KING, true);  // White king
+        board[7][4] = new Piece(Piece.PieceType.KING, true); // White king
     }
 
     public boolean isValidMove(int initX, int initY, int finalX, int finalY) {
         Piece piece = board[initX][initY];
-        if (piece == null) {
+        if (piece == null || piece.isWhite() != whiteTurn) {
             return false; // No piece at the initial position
         }
 
@@ -153,8 +155,8 @@ public class ChessGame {
                         return true; // Valid rook move
                     }
                 }
-                
                 break;
+
             case QUEEN: // Queen
                 if (Math.abs(deltaX) == Math.abs(deltaY)) {
                     int xDir = (deltaX > 0) ? 1 : -1;
@@ -195,6 +197,14 @@ public class ChessGame {
                 break;
 
             case KING: // King
+                if (isCheck(whiteTurn)) {
+                    // Check if the move can get the king out of check, block the check, or capture
+                    // the attacking piece
+                    if (!isEscapeMove(initX, initY, finalX, finalY) && !isBlockMove(initX, initY, finalX, finalY)
+                            && !isCaptureMove(initX, initY, finalX, finalY)) {
+                        return false; // Invalid move when the king is in check
+                    }
+                }
                 if (Math.abs(deltaX) <= 1 && Math.abs(deltaY) <= 1) {
                     return true; // Valid king move
                 }
@@ -202,130 +212,107 @@ public class ChessGame {
             default:
                 return false; // Invalid piece type
         }
+        // Make a temporary move
+        move(initX, initY, finalX, finalY);
 
-        return false; // Invalid move for the piece
+        // Check if the move puts the player's own king in check
+        boolean isKingInCheck = isCheck(piece.isWhite());
+
+        // Undo the move
+        move(finalX, finalY, initX, initY);
+
+        // Return the result
+        return !isKingInCheck;
     }
 
     public Piece getPieceAt(int x, int y) {
         if (x < 0 || x >= 8 || y < 0 || y >= 8) {
             return null; // Invalid position, return null
         }
-        
+
         return board[x][y];
     }
 
     public boolean isCheck(boolean isWhiteTurn) {
         // Find the current player's king position
-        int kingX = -1;
-        int kingY = -1;
-        for (int x = 0; x < 8; x++) {
-            for (int y = 0; y < 8; y++) {
-                Piece piece = board[x][y];
-                if (piece != null && piece.getPieceType() == Piece.PieceType.KING && piece.isWhite() == isWhiteTurn) {
-                    kingX = x;
-                    kingY = y;
-                    break;
-                }
-            }
-        }
-    
-        if (kingX == -1 || kingY == -1) {
+        int[] kingPosition = findKingPosition(isWhiteTurn);
+
+        if (kingPosition[0] == -1 || kingPosition[1] == -1) {
             return false; // King not found, return false
         }
-    
+
         // Check if any opponent's pieces can attack the king
         for (int x = 0; x < 8; x++) {
             for (int y = 0; y < 8; y++) {
                 Piece piece = board[x][y];
                 if (piece != null && piece.isWhite() != isWhiteTurn) {
-                    int finalX = kingX;
-                    int finalY = kingY;
+                    int finalX = kingPosition[0];
+                    int finalY = kingPosition[1];
                     if (isValidMove(x, y, finalX, finalY)) {
-                        return true; // King is under attack (in check)
+                        // Check if the opponent's piece can be captured
+                        Piece capturedPiece = board[finalX][finalY];
+                        if (capturedPiece != null && capturedPiece.getPieceType() == Piece.PieceType.KING
+                                && capturedPiece.isWhite() == isWhiteTurn) {
+                            return true; // King is under attack (in check)
+                        }
+                    }
+                }
+            }
+        }
+
+        return false; // King is not under attack (not in check)
+    }
+
+    public boolean isCheckmate(boolean isWhiteTurn) {
+        // Check if the current player's king is in check
+        if (!isCheck(isWhiteTurn)) {
+            return false; // King is not in check, not checkmate
+        }
+    
+        // Check if any move can get the king out of check
+        for (int initX = 0; initX < 8; initX++) {
+            for (int initY = 0; initY < 8; initY++) {
+                Piece piece = board[initX][initY];
+                if (piece != null && piece.isWhite() == isWhiteTurn) {
+                    for (int finalX = 0; finalX < 8; finalX++) {
+                        for (int finalY = 0; finalY < 8; finalY++) {
+                            if (isValidMove(initX, initY, finalX, finalY)) {
+                                // Make the move
+                                move(initX, initY, finalX, finalY);
+    
+                                // Check if the king is still in check after the move
+                                boolean isKingInCheck = isCheck(isWhiteTurn);
+    
+                                // Undo the move
+                                move(finalX, finalY, initX, initY);
+    
+                                // If the king is not in check after the move, it's not checkmate
+                                if (!isKingInCheck) {
+                                    return false;
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
     
-        return false; // King is not under attack (not in check)
-    }
-
-    public boolean isCheckmate(boolean isWhiteTurn) {
-        if (!isCheck(isWhiteTurn)) {
-            return false; // King is not in check, not in checkmate
-        }
-    
-        // Generate all possible moves for the current player's pieces
-        List<Move> possibleMoves = generateAllPossibleMoves(isWhiteTurn);
-    
-        // Check if any move can get the king out of check
-        for (Move move : possibleMoves) {
-            int initX = move.getInitX();
-            int initY = move.getInitY();
-            int finalX = move.getFinalX();
-            int finalY = move.getFinalY();
-    
-            // Try making the move and check if the king is still in check
-            move(initX, initY, finalX, finalY);
-            boolean kingInCheck = isCheck(isWhiteTurn);
-    
-            // Undo the move
-            move(finalX, finalY, initX, initY);
-    
-            if (!kingInCheck) {
-                return false; // There is a legal move to get out of check, not in checkmate
-            }
-        }
-    
-        return true; // No legal moves to get out of check, in checkmate
-    }
-    
-    private List<Move> generateAllPossibleMoves(boolean isWhiteTurn) {
-        List<Move> possibleMoves = new ArrayList<>();
-    
-        // Iterate through the board to find the current player's pieces
-        for (int x = 0; x < 8; x++) {
-            for (int y = 0; y < 8; y++) {
-                Piece piece = board[x][y];
-                if (piece != null && piece.isWhite() == isWhiteTurn) {
-                    // Generate moves for the current piece
-                    List<Move> moves = generateMovesForPiece(x, y);
-                    possibleMoves.addAll(moves);
-                }
-            }
-        }
-    
-        return possibleMoves;
-    }
-    
-    private List<Move> generateMovesForPiece(int initX, int initY) {
-        List<Move> moves = new ArrayList<>();
-    
-        // Generate moves based on the piece's movement rules
-        for (int x = 0; x < 8; x++) {
-            for (int y = 0; y < 8; y++) {
-                if (isValidMove(initX, initY, x, y)) {
-                    moves.add(new Move(initX, initY, x, y));
-                }
-            }
-        }
-    
-        return moves;
-    }
+        return true; // King is in checkmate
+    }    
 
     public boolean isStalemate() {
         // Check if the current player is in stalemate
         boolean isWhiteTurn = true; // determine the current player's turn (e.g., based on a variable or game state)
-    
+
         if (isCheck(isWhiteTurn)) {
             return false; // If the player is in check, it's not a stalemate
         }
-    
+
         // Iterate through all pieces on the board
         for (int x = 0; x < 8; x++) {
             for (int y = 0; y < 8; y++) {
                 Piece piece = board[x][y];
-    
+
                 // Check if the piece belongs to the current player
                 if (piece != null && piece.isWhite() == isWhiteTurn) {
                     // Generate all possible moves for the piece
@@ -342,13 +329,12 @@ public class ChessGame {
         }
         return true; // If no valid moves are found for any piece, it's a stalemate
     }
-    
 
     public boolean isInsufficientMaterial() {
         // Count the number of pieces remaining on the board
         int whitePiecesCount = countPieces(true);
         int blackPiecesCount = countPieces(false);
-    
+
         // Draw due to insufficient material
         if (whitePiecesCount == 1 && blackPiecesCount == 1) {
             // Only kings remaining
@@ -364,18 +350,18 @@ public class ChessGame {
                 return true;
             }
         } else if (whitePiecesCount == 2 && blackPiecesCount == 2) {
-            // White king and bishop or knight vs. black king and bishop or knight
+            // White king and bishop or knight vs. black king and bishop or knighte
             if (!containsSameColoredBishops()) {
                 return true;
             }
         }
-    
+
         return false;
     }
-    
+
     private int countPieces(boolean isWhite) {
         int count = 0;
-    
+
         // Iterate through all pieces on the board
         for (int x = 0; x < 8; x++) {
             for (int y = 0; y < 8; y++) {
@@ -385,10 +371,10 @@ public class ChessGame {
                 }
             }
         }
-    
+
         return count;
     }
-    
+
     private boolean containsBishopOrKnight(boolean isWhite) {
         // Iterate through all pieces on the board
         for (int x = 0; x < 8; x++) {
@@ -402,14 +388,14 @@ public class ChessGame {
                 }
             }
         }
-    
+
         return false;
     }
-    
+
     private boolean containsSameColoredBishops() {
         boolean whiteBishopFound = false;
         boolean blackBishopFound = false;
-    
+
         // Iterate through all pieces on the board
         for (int x = 0; x < 8; x++) {
             for (int y = 0; y < 8; y++) {
@@ -426,7 +412,7 @@ public class ChessGame {
                 }
             }
         }
-    
+
         return whiteBishopFound && blackBishopFound;
     }
 
@@ -449,7 +435,7 @@ public class ChessGame {
         }
         return sb.toString();
     }
-    
+
     public boolean isFiftyMoveRule() {
         return movesWithoutCaptureOrPawnMove >= 50;
     }
@@ -460,7 +446,7 @@ public class ChessGame {
 
     public GameResult getResult() {
         boolean isWhiteTurn = true; // Assuming it's white's turn initially
-    
+
         // Check if the current player is in checkmate
         if (isCheckmate(isWhiteTurn)) {
             if (isWhiteTurn) {
@@ -469,53 +455,123 @@ public class ChessGame {
                 return GameResult.WHITE_WINS; // White wins
             }
         }
-    
+
         // Check if the game is in a stalemate
         if (isStalemate()) {
             return GameResult.DRAW; // Stalemate, game is a draw
         }
-    
+
         // Check if the game is in insufficient material
         if (isInsufficientMaterial()) {
             return GameResult.DRAW; // Insufficient material, game is a draw
         }
-    
+
         // Check if the game is in threefold repetition
         if (isThreefoldRepetition()) {
             return GameResult.DRAW; // Threefold repetition, game is a draw
         }
-    
+
         // Check if the game is in the fifty-move rule
         if (isFiftyMoveRule()) {
             return GameResult.DRAW; // Fifty-move rule, game is a draw
         }
-    
+
         // If none of the above conditions are met, the game is still ongoing
         return GameResult.ONGOING;
     }
-    
+
     public void move(int initX, int initY, int finalX, int finalY) {
         Piece initialPiece = getPieceAt(initX, initY);
         Piece finalPiece = getPieceAt(finalX, finalY);
-    
         // Check if the move is valid for the piece on the initial position
         if (initialPiece != null && isValidMove(initX, initY, finalX, finalY)) {
             // Move the piece from the initial position to the final position
-            board[initX][initY] = null;
             board[finalX][finalY] = initialPiece;
-    
+            board[initX][initY] = null;
+
             // Increment the movesWithoutCaptureOrPawnMove counter
             if (initialPiece.getPieceType() != Piece.PieceType.PAWN && finalPiece == null) {
                 movesWithoutCaptureOrPawnMove++;
             } else {
                 movesWithoutCaptureOrPawnMove = 0;
             }
-    
+
+            whiteTurn = !whiteTurn;
+
             // Notify the GUI about the move
             if (gui != null) {
                 gui.onMoveMade(initX, initY, finalX, finalY);
             }
         }
+    }
+
+    public int[] findKingPosition(boolean isWhiteTurn) {
+        int[] kingPosition = { -1, -1 };
+
+        for (int x = 0; x < 8; x++) {
+            for (int y = 0; y < 8; y++) {
+                Piece piece = board[x][y];
+                if (piece != null && piece.getPieceType() == Piece.PieceType.KING && piece.isWhite() == isWhiteTurn) {
+                    kingPosition[0] = x;
+                    kingPosition[1] = y;
+                    return kingPosition;
+                }
+            }
+        }
+
+        return kingPosition;
+    }
+
+    private boolean isEscapeMove(int initX, int initY, int finalX, int finalY) {
+        // Simulate the move
+        Piece movedPiece = board[initX][initY];
+        Piece capturedPiece = board[finalX][finalY];
+        board[finalX][finalY] = movedPiece;
+        board[initX][initY] = null;
+
+        // Check if the king is still in check after the move
+        boolean isEscapeMove = !isCheck(movedPiece.isWhite());
+
+        // Undo the move
+        board[initX][initY] = movedPiece;
+        board[finalX][finalY] = capturedPiece;
+
+        return isEscapeMove;
+    }
+
+    private boolean isBlockMove(int initX, int initY, int finalX, int finalY) {
+        // Simulate the move
+        Piece movedPiece = board[initX][initY];
+        Piece capturedPiece = board[finalX][finalY];
+        board[finalX][finalY] = movedPiece;
+        board[initX][initY] = null;
+
+        // Check if the move blocks the check by placing a piece between the attacking
+        // piece and the king
+        boolean isBlockMove = !isCheck(movedPiece.isWhite());
+
+        // Undo the move
+        board[initX][initY] = movedPiece;
+        board[finalX][finalY] = capturedPiece;
+
+        return isBlockMove;
+    }
+
+    private boolean isCaptureMove(int initX, int initY, int finalX, int finalY) {
+        // Simulate the move
+        Piece movedPiece = board[initX][initY];
+        Piece capturedPiece = board[finalX][finalY];
+        board[finalX][finalY] = movedPiece;
+        board[initX][initY] = null;
+
+        // Check if the move captures the attacking piece
+        boolean isCaptureMove = !isCheck(movedPiece.isWhite());
+
+        // Undo the move
+        board[initX][initY] = movedPiece;
+        board[finalX][finalY] = capturedPiece;
+
+        return isCaptureMove;
     }
 
 }

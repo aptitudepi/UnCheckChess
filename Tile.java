@@ -4,9 +4,7 @@ import javax.swing.*;
 public class Tile {
   public JButton btn;
   private boolean isWhite;
-  private Piece.PieceType pieceType;
   private Piece piece;
-  private ChessGame chessGame;
 
   public Tile() {
     isWhite = true;
@@ -14,14 +12,12 @@ public class Tile {
   }
 
   public Tile(ChessGame chessGame, boolean white) {
-    this.chessGame = chessGame;
     isWhite = white;
     btn = new JButton();
     btn.setBackground((isWhite) ? Color.decode("#C0B9B1") : Color.decode("#95744B"));
   }
 
   public void setPiece(boolean white, Piece.PieceType pieceType) {
-    this.pieceType = pieceType;
     this.piece = new Piece(pieceType, white);
     try {
       ImageIcon icon = getPieceIcon(white, pieceType.getSymbol());
@@ -46,10 +42,6 @@ public class Tile {
     String iconPath = getIcon(color + piece);
     ImageIcon icon = new ImageIcon(getClass().getResource(iconPath));
     return icon;
-  }
-
-  public void clearPiece() {
-    this.piece = null;
   }
 
   public void setPiece(Piece piece) {
