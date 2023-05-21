@@ -1,6 +1,7 @@
-import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.*;
 
 public class ChessGUI extends JFrame implements ActionListener {
   // declare component variables
@@ -9,6 +10,7 @@ public class ChessGUI extends JFrame implements ActionListener {
   private Tile[][] arrSquare;
   private boolean pieceSelected;
   private int initX, initY, finalX, finalY;
+  private ChessGame chessGame;
   JLabel lbBG;
 
   public static void main(String[] args) {
@@ -19,14 +21,26 @@ public class ChessGUI extends JFrame implements ActionListener {
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
   }
 
+  public void onMoveMade(int initX, int initY, int finalX, int finalY) {
+    // Implement the logic to update the GUI based on the move made in the ChessGame
+    // For example, you can update the appearance of the tiles/buttons to reflect
+    // the move
+
+    // Here's a simple example where the background color of the tiles is changed:
+    Tile initialTile = arrSquare[initX][initY];
+    Tile finalTile = arrSquare[finalX][finalY];
+
+    // Update the background color of the initial and final tiles
+    initialTile.btn.setBackground((initX + initY) % 2 == 0 ? Color.decode("#C0B9B1") : Color.decode("#95744B"));
+    finalTile.btn.setBackground((finalX + finalY) % 2 == 0 ? Color.decode("#C0B9B1") : Color.decode("#95744B"));
+  }
+
   // constructor
   ChessGUI() {
     super("Chess GUI"); // Window Title
     // create components
     arrSquare = new Tile[8][8];
-    // bg = new ImageIcon("./img/wood3.jpg");
-    // lbBG = new JLabel();
-    // lbBG.setIcon(bg);
+    chessGame = new ChessGame(); // Initialize the chessGame object
     // Font(font name, 0-normal/1-bold/2-italics/3-bold and italics, font size)
 
     // create JPanel
@@ -36,58 +50,58 @@ public class ChessGUI extends JFrame implements ActionListener {
     // masterPanel.add(lbBG);
     for (int i = 0; i < 8; i++) {
       for (int j = 0; j < 8; j++) {
-        arrSquare[i][j] = new Tile(((i % 2 == 0 & j % 2 == 1) | (i % 2 == 1 & j % 2 == 0)) ? false : true);
+        arrSquare[i][j] = new Tile(null, ((i % 2 == 0 & j % 2 == 1) | (i % 2 == 1 & j % 2 == 0)) ? false : true);
         chessBoard.add(arrSquare[i][j].btn);
         switch (j) {
           case 0:
           case 7:
             if (i == 7) {
-              arrSquare[i][j].setPiece(true, 3);
+              arrSquare[i][j].setPiece(true, Piece.PieceType.ROOK);
             }
             if (i == 0) {
-              arrSquare[i][j].setPiece(false, 3);
+              arrSquare[i][j].setPiece(false, Piece.PieceType.ROOK);
             }
             break;
           case 1:
           case 6:
             if (i == 7) {
-              arrSquare[i][j].setPiece(true, 1);
+              arrSquare[i][j].setPiece(true, Piece.PieceType.KNIGHT);
             }
             if (i == 0) {
-              arrSquare[i][j].setPiece(false, 1);
+              arrSquare[i][j].setPiece(false, Piece.PieceType.KNIGHT);
             }
             break;
           case 2:
           case 5:
             if (i == 7) {
-              arrSquare[i][j].setPiece(true, 2);
+              arrSquare[i][j].setPiece(true, Piece.PieceType.BISHOP);
             }
             if (i == 0) {
-              arrSquare[i][j].setPiece(false, 2);
+              arrSquare[i][j].setPiece(false, Piece.PieceType.BISHOP);
             }
             break;
           case 3:
             if (i == 7) {
-              arrSquare[i][j].setPiece(true, 4);
+              arrSquare[i][j].setPiece(true, Piece.PieceType.QUEEN);
             }
             if (i == 0) {
-              arrSquare[i][j].setPiece(false, 4);
+              arrSquare[i][j].setPiece(false, Piece.PieceType.QUEEN);
             }
             break;
           case 4:
             if (i == 7) {
-              arrSquare[i][j].setPiece(true, 5);
+              arrSquare[i][j].setPiece(true, Piece.PieceType.KING);
             }
             if (i == 0) {
-              arrSquare[i][j].setPiece(false, 5);
+              arrSquare[i][j].setPiece(false, Piece.PieceType.KING);
             }
             break;
         }
         if (i == 6) {
-          arrSquare[i][j].setPiece(true, 0);
+          arrSquare[i][j].setPiece(true, Piece.PieceType.PAWN);
         }
         if (i == 1) {
-          arrSquare[i][j].setPiece(false, 0);
+          arrSquare[i][j].setPiece(false, Piece.PieceType.PAWN);
         }
 
       }
@@ -101,36 +115,31 @@ public class ChessGUI extends JFrame implements ActionListener {
         arrSquare[i][j].btn.addActionListener(this);
       }
     }
+    chessGame.registerMoveListener(this);
   }
 
   public void actionPerformed(ActionEvent e) {
     JButton button = (JButton) e.getSource();
-    if (pieceSelected) {
-      for (int i = 0; i < arrSquare.length; i++) {
-        for (int j = 0; j < arrSquare[i].length; j++) {
-          if (arrSquare[i][j].btn == button) {
+
+    // Find the button in the arrSquare array
+    for (int i = 0; i < arrSquare.length; i++) {
+      for (int j = 0; j < arrSquare[i].length; j++) {
+        if (arrSquare[i][j].btn == button) {
+          // If a piece is already selected, assign the current position as the final
+          // position
+          if (pieceSelected) {
             finalX = i;
             finalY = j;
-            Tile.move(initX, initY, finalX, finalY, arrSquare);
+            chessGame.move(initX, initY, finalX, finalY);
             pieceSelected = false;
-            break;
-          }
-        }
-      }
-    } else {
-      for (int i = 0; i < arrSquare.length; i++) {
-        for (int j = 0; j < arrSquare[i].length; j++) {
-          if (arrSquare[i][j].btn == button) {
+          } else { // Otherwise, assign the current position as the initial position
             initX = i;
             initY = j;
             pieceSelected = true;
-            break;
           }
+          break;
         }
       }
     }
-    
-
-    // if (e.getSource() == selector) {}
   }
 }

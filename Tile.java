@@ -1,51 +1,68 @@
+import java.awt.Color;
 import javax.swing.*;
-import java.awt.*;
-import javax.imageio.ImageIO;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Tile {
   public JButton btn;
   private boolean isWhite;
-  private final Character[] pieces = { 'P', 'N', 'B', 'R', 'Q', 'K' };
-  private final ArrayList<Character> pieceTypes = new ArrayList<>(Arrays.asList(pieces));
-  private char piece;
-  private int numType;
+  private Piece.PieceType pieceType;
+  private Piece piece;
+  private ChessGame chessGame;
 
   public Tile() {
     isWhite = true;
     btn = new JButton();
   }
 
-  public Tile(boolean white) {
+  public Tile(ChessGame chessGame, boolean white) {
+    this.chessGame = chessGame;
     isWhite = white;
     btn = new JButton();
     btn.setBackground((isWhite) ? Color.decode("#C0B9B1") : Color.decode("#95744B"));
   }
 
-  public void setPiece(boolean white, int numType) {
-    piece = pieceTypes.get(numType);
+  public void setPiece(boolean white, Piece.PieceType pieceType) {
+    this.pieceType = pieceType;
+    this.piece = new Piece(pieceType, white);
     try {
-      btn.setIcon(new ImageIcon(ImageIO.read(getClass().getResource("img/" + ((white) ? "w" : "b") + piece + ".png"))));
+      ImageIcon icon = getPieceIcon(white, pieceType.getSymbol());
+      btn.setIcon(icon);
     } catch (Exception ex) {
       System.out.println(ex);
     }
   }
-  
-  public int numType() {
-    return numType;
-  }
 
-  public boolean getColor() {
-    return isWhite;
+  public String getIcon(String icon) {
+    icon = "img/" + icon + ".png";
+    return icon;
   }
 
   public void setPiece() {
+    this.piece = null;
     btn.setIcon(null);
+}
+
+  private ImageIcon getPieceIcon(boolean isWhite, char piece) {
+    String color = (isWhite) ? "w" : "b";
+    String iconPath = getIcon(color + piece);
+    ImageIcon icon = new ImageIcon(getClass().getResource(iconPath));
+    return icon;
   }
 
-  public static void move(int xi, int yi, int xf, int yf, Tile[][] arr) {
-    arr[xf][yf].setPiece(arr[xi][yi].getColor(), arr[xi][yi].numType());
-    arr[xi][yi].setPiece();
+  public void clearPiece() {
+    this.piece = null;
+  }
+
+  public void setPiece(Piece piece) {
+    this.piece = piece;
+    if (piece != null) {
+      try {
+        ImageIcon icon = getPieceIcon(piece.isWhite(), piece.getPieceType().getSymbol());
+        btn.setIcon(icon);
+      } catch (Exception ex) {
+        System.out.println(ex);
+      }
+    } else {
+      btn.setIcon(null);
+    }
   }
 }
