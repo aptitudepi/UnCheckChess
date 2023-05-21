@@ -1,6 +1,16 @@
 public class Piece {
     private boolean isWhite;
     private PieceType pieceType;
+    private PieceColor pieceColor;
+
+    enum PieceColor {
+        BLACK,
+        WHITE;
+    }
+
+    public PieceColor getPieceColor() {
+        return this.pieceColor;
+    }
 
     enum PieceType {
         PAWN('P'),
@@ -24,8 +34,9 @@ public class Piece {
     public Piece(PieceType pieceType, boolean isWhite) {
         this.pieceType = pieceType;
         this.isWhite = isWhite;
+        this.pieceColor = (isWhite)? PieceColor.WHITE: PieceColor.BLACK;
     }
-    
+
     public PieceType getPieceType() {
         return pieceType;
     }

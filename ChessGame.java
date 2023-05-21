@@ -66,6 +66,12 @@ public class ChessGame {
             return false; // No piece at the initial position
         }
 
+        if (board[finalX][finalY] != null) {
+            if (piece.getPieceColor() == board[finalX][finalY].getPieceColor()) {
+                return false;
+            }
+        }
+
         // Check if the final position is within the bounds of the board
         if (finalX < 0 || finalX >= 8 || finalY < 0 || finalY >= 8) {
             return false; // Final position is out of bounds
@@ -200,8 +206,7 @@ public class ChessGame {
                 if (isCheck(whiteTurn)) {
                     // Check if the move can get the king out of check, block the check, or capture
                     // the attacking piece
-                    if (!isEscapeMove(initX, initY, finalX, finalY) && !isBlockMove(initX, initY, finalX, finalY)
-                            && !isCaptureMove(initX, initY, finalX, finalY)) {
+                    if (!isEscapeMove(initX, initY, finalX, finalY) && !isBlockMove(initX, initY, finalX, finalY) && !isCaptureMove(initX, initY, finalX, finalY)) {
                         return false; // Invalid move when the king is in check
                     }
                 }

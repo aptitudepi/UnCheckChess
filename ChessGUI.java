@@ -9,23 +9,22 @@ public class ChessGUI extends JFrame implements ActionListener {
   private JPanel chessBoard;
   private Tile[][] arrSquare;
   private boolean pieceSelected;
-  private int initX
-  private int initY
-  private int finalX
+  private int initX;
+  private int initY;
+  private int finalX;
   private int finalY;
   private ChessGame chessGame;
 
   public static void main(String[] args) {
     JFrame frame = new ChessGUI();
     SwingUtilities.invokeLater(new Runnable() {
-        public void run() {
-            frame.setPreferredSize(new Dimension(2000, 1080));
-            frame.setVisible(true);
-            frame.pack();
-            frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-          
-        }
-    }
+      public void run() {
+        frame.setPreferredSize(new Dimension(2000, 1080));
+        frame.setVisible(true);
+        frame.pack();
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+      }
+    });
   }
 
   public void onMoveMade(int initX, int initY, int finalX, int finalY) {
