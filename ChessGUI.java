@@ -9,7 +9,10 @@ public class ChessGUI extends JFrame implements ActionListener {
   private JPanel chessBoard;
   private Tile[][] arrSquare;
   private boolean pieceSelected;
-  private int initX, initY, finalX, finalY;
+  private int initX
+  private int initY
+  private int finalX
+  private int finalY;
   private ChessGame chessGame;
 
   public static void main(String[] args) {
