@@ -5,3 +5,6 @@ name = "java"
 
   [analyzers.meta]
   runtime_version = "16"
+
+[[transformers]]
+name = "google-java-format"
