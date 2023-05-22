@@ -32,6 +32,11 @@ public class ChessGUI extends JFrame implements ActionListener {
     Tile finalTile = arrSquare[finalX][finalY];
     finalTile.setPiece(initialTile.getPiece());
     initialTile.setPiece();
+    if (chessGame.getResult() == ChessGame.GameResult.BLACK_WINS) {
+      showWinner("Black");
+    } else if (chessGame.getResult() == ChessGame.GameResult.WHITE_WINS) {
+      showWinner("White");
+    }
   }
 
   // constructor
@@ -115,6 +120,10 @@ public class ChessGUI extends JFrame implements ActionListener {
       }
     }
     chessGame.registerMoveListener(this);
+  }
+
+  public void showWinner(String winner) {
+    JOptionPane.showMessageDialog(this, winner + " has won the game!", "Game Over", JOptionPane.INFORMATION_MESSAGE);
   }
 
   public void actionPerformed(ActionEvent e) {
