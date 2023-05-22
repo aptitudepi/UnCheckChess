@@ -124,6 +124,11 @@ public class ChessGUI extends JFrame implements ActionListener {
 
   public void showWinner(String winner) {
     JOptionPane.showMessageDialog(this, winner + " has won the game!", "Game Over", JOptionPane.INFORMATION_MESSAGE);
+    Window[] windows = Window.getWindows();
+    for (Window window : windows) {
+      window.dispose();
+    }
+    System.exit(0);
   }
 
   public void actionPerformed(ActionEvent e) {
