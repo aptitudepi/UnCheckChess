@@ -148,7 +148,9 @@ public class ChessGUI extends JFrame implements ActionListener {
           } else { // Otherwise, assign the current position as the initial position
             initX = i;
             initY = j;
-            pieceSelected = true;
+            if (chessGame.board[initX][initY] != null) {
+              pieceSelected = true;
+            }
           }
           break;
         }

@@ -9,3 +9,9 @@
 - I reserve the right to require you to add additional features if your game is too simple
 - If you need image files or word lists, go to https://github.com/ddeereAMCHS/Tools and see if I have what you need
 - When you are done, uncomment the print statement in `Done.java`
+***
+# Instructions
+## Unchecked-Chess
+### **It's chess!** 
+##### ...Except checks do NOT matter! Pawns cannot en passant or promote themselves, and Kings cannot castle. Your main objective is to capture your opponents king before they capture yours! 
+

@@ -3,7 +3,7 @@ import java.util.List;
 import java.util.Collections;
 
 public class ChessGame {
-    private Piece[][] board;
+    public Piece[][] board;
     private List<String> previousPositions;
     private int movesWithoutCaptureOrPawnMove;
     private ChessGUI gui;
@@ -97,7 +97,7 @@ public class ChessGame {
                             && board[5][finalY] == null) {
                         return true; // Move two steps forward from starting position
                     }
-                    if (deltaY == -1 && Math.abs(deltaX) == 1 && board[finalX][finalY] != null
+                    if (deltaY == 1 && Math.abs(deltaX) == 1 && board[finalX][finalY] != null
                             && !board[finalX][finalY].isWhite()) {
                         return true; // Capture diagonally
                     }
@@ -110,10 +110,11 @@ public class ChessGame {
                             && board[2][finalY] == null) {
                         return true; // Move two steps forward from starting position
                     }
-                    if (deltaY == 1 && Math.abs(deltaX) == 1 && board[finalX][finalY] != null
+                    if (deltaY == -1 && Math.abs(deltaX) == 1 && board[finalX][finalY] != null
                             && board[finalX][finalY].isWhite()) {
                         return true; // Capture diagonally
                     }
+                    return false;
                 }
                 break;
 
