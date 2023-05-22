@@ -66,6 +66,10 @@ public class ChessGame {
             return false; // No piece at the initial position
         }
 
+        if (board[finalX][finalY] == board[initX][initY]) {
+            return false;
+        }
+
         if (board[finalX][finalY] != null) {
             if (piece.getPieceColor() == board[finalX][finalY].getPieceColor()) {
                 return false;
