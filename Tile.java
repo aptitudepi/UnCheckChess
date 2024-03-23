@@ -35,7 +35,7 @@ public class Tile {
   public void setPiece() {
     this.piece = null;
     btn.setIcon(null);
-}
+  }
 
   private ImageIcon getPieceIcon(boolean isWhite, char piece) {
     String color = (isWhite) ? "w" : "b";
@@ -60,5 +60,5 @@ public class Tile {
 
   public Piece getPiece() {
     return piece;
-}
+  }
 }
